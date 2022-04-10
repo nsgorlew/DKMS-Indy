@@ -1,0 +1,137 @@
+{% extends 'base.html' %}
+{% block content %}
+<html>
+<head>
+	<style>
+		h1{
+			font-family: "32px "Lucida Grande", Helvetica, Arial, sans-serif";  
+			font-size: 1rem;
+			color: rgb(68, 67, 67);
+			text-align: center;
+		}
+		textarea {
+			display: block;
+			margin-left: auto;
+			margin-right: auto;
+		}
+		div {
+			text-align: center;
+		}
+		p {
+			text-align: center;
+		}
+	</style>
+</head>
+	<body>
+		<div class="container">
+		<p>Create Schema:</p>
+		<form id="schema_form" action="/create-schema" method="POST">
+			<div>
+				<label for="schema_name">Schema Name: </label>
+				<input type="text" id="schema_name" name="schema_name" style="width:500px;"><br><br>
+			</div>
+			<div>
+				<label for="schema_name">Schema Version: </label>
+				<input type="text" id="schema_version" name="schema_version" style="width:500px;"><br><br>
+			</div>
+			<div>
+				<label for="attributes">Please input an array of attributes:</label>
+				<textarea id="attributes" name="attributes" rows="3" cols="70">[public_key]</textarea>
+				<br><br>
+			</div>
+			<button class="btn btn-primary btn-lg btn-block mb-3" value="Submit">Submit</button>
+		</form>
+		</div>
+		<div class="container">
+		<p>Create Credential Definition:</p>
+		<form action="/create-credential-definition" method="POST">
+			<div>
+			<label for="schema_id">Schema ID:</label>
+			<select id="schema_id" name="schema_id" method="GET" action="/">
+				{% for schema in schemas %}
+					<option value="{{schema}}" SELECTED>{{schema}}</option>
+				{% endfor %}
+			</select>
+			</div>
+			<div>
+				<label for="connection_id">Recipient DID:</label>
+				<select id="connection_id" name="connection_id" method="GET" action="/">
+					{% for connection, value in connections.items() %}
+						<option value="{{value}}" SELECTED>{{connection}}</option>
+					{% endfor %}
+				</select>
+				</div>
+			<button class="btn btn-primary btn-lg btn-block mb-3" value="Submit">Submit</button>
+		</form>
+		</div>
+
+		<p>Get DID's Verkey From Ledger:</p>
+		<div class="container">
+			{% with messages = get_flashed_messages() %}
+			{% if messages %}
+			<ul class=flashes>
+			{% for message in messages %}
+			<div class="alert alert-warning alert-dismissible fade show" role="alert">
+				<span>{{message}}</span>
+				<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+				  <span aria-hidden="true">&times;</span>
+				</button>
+			  </div>
+			{% endfor %}
+			</ul>
+			{% endif %}
+			{% endwith %}
+		</div>
+		<form id="get_verkey_form" action="/get-verkey" method="POST">
+			<div>
+				<label for="did">Recipient's Public DID:</label>
+				<input type="text" style="width: 500px;" id="did" name="did">
+				<button class="btn btn-primary btn-lg btn-block mb-3" value="Submit">Submit</button>
+			</div>
+		</form>
+
+		<p>Issue Credential:</p>
+		<form id="issue_cred_form" action="/issue-credential" method="POST">
+			<div>
+			<label for="cred_def_id">Credential Definition ID:</label>
+			<select id="cred_def_id" name="cred_def_id" method="GET" action="/">
+				{% for cred_def in credential_definitions %}
+					<option value="{{cred_def}}" SELECTED>{{cred_def}}</option>
+				{% endfor %}
+			</select>
+			</div>
+			<div>
+				<label for="connection_id">Recipient DID:</label>
+				<select id="connection_id" name="connection_id" method="GET" action="/">
+					{% for connection, value in connections.items() %}
+						<option value="{{value}}" SELECTED>{{connection}}</option>
+					{% endfor %}
+				</select>
+			</div>
+			<div>
+			<label for="verkey">Recipient's Verkey:</label>
+			<input type="text" style="width: 500px;" id="verkey" name="verkey">
+			<button class="btn btn-primary btn-lg btn-block mb-3" value="Submit">Submit</button>
+			</div>
+		</form>
+		</div>
+	</body>
+	<script>
+		//const schemaForm = document.getElementById('schema_form');
+		//const credDefForm = document.getElementById('cred_def_form');
+		//const issueCredForm = document.getElementById('issue_cred_form');
+		//const getVerkeyForm = document.getElementById('get_verkey_form');
+
+		//turn JSON array in form data into a usable Array for the API POST
+		//function handleAttributes(formString,arrayString) {
+			//var attributesData = document.getElementById(formString).elements[arrayString].innerHTML;
+			//var attributesArray = attributesData.split("[").join("").split("]").join("").split("\n").join("").split(",");
+			//handledArray = [];
+			//for(let attr of attributesArray){
+				//handledArray.push(attr);
+			//}
+			//return handledArray;
+		//}
+	</script>
+</html>
+{% endblock %}
